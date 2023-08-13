@@ -6,3 +6,9 @@ export const modal = {
   leaveFrom: 'opacity-100 translate-y-0',
   leaveTo: 'opacity-0 translate-y-100'
 }
+
+export const imageLoad = {
+  enter: 'transition-opacity duration-200 ease-in-out',
+  enterFrom: 'opacity-0',
+  enterTo: 'opacity-100'
+}
