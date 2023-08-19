@@ -3,14 +3,14 @@ import { useRef, useState } from "react";
 import tw from "twin.macro";
 import computer from '../../assets/computer.png';
 import filmGrain from '../../assets/filmgrain.jpg';
+import Page2 from "./Page2";
 
 const GradientCover = tw.div`
   h-[100vh] w-full bg-gradient-to-t from-red-200 via-red-900 to-red-900 fixed
-  sepia-[50%]
 `
 
 const Container = tw.div`
-  flex flex-col gap-10 items-center justify-between pt-20 h-full
+  flex flex-col gap-10 items-center justify-start pt-10 md:pt-20 2xl:pt-32 h-full backdrop-sepia-[50%] sepia-[50%]
 `
 
 const FilmGrain = tw(motion.img)`
@@ -18,15 +18,15 @@ const FilmGrain = tw(motion.img)`
 `
 
 const BigTitle = tw.div`
-  text-7xl sm:text-8xl xl:text-9xl font-display text-red-200 font-bold drop-shadow-2xl px-10
+  text-5xl md:text-7xl 2xl:text-8xl font-display text-red-200 font-bold drop-shadow-2xl px-10
 `
 
 const Computer = tw(motion.img)`
-  sepia container object-contain px-10 origin-[38% 22%] z-20
+  sepia container object-contain px-10 origin-[40% 20%] z-20 pointer-events-none max-h-[50vh]
 `
 
 const Filler = tw.div`
-  relative lg:max-h-60 px-5 py-10 bg-red-200 w-full translate-y-40 lg:translate-y-10
+  absolute -bottom-72 lg:-bottom-10 lg:max-h-60 px-5 py-10 bg-red-200 w-full
 `
 
 const FillerContent = tw.div`
@@ -38,28 +38,26 @@ const FillerGradientOverlay = tw.div`
   bg-gradient-to-t from-red-200 to-transparent z-10 absolute inset-0
 `
 
-const Filters = tw(motion.div)`
-  absolute inset-0 backdrop-blur-sm sepia-[30%] opacity-30
+const Black = tw(motion.div)`
+  absolute inset-0 bg-black z-40
 `
 
-const Black = tw(motion.div)`
-  absolute inset-0 bg-black z-40 pointer-events-none
-`
+export const PAGE_BREAK = 1000
 
 export default function Home(props) {
   const { scrollY } = useScroll()
   const computerScale = useTransform(scrollY, 
-    [0, 1000], [1, 10],
+    [0, PAGE_BREAK], [1, 10],
   {
     ease: easeIn
   })
 
   const filterOpacities = useTransform(scrollY,
-    [0, 500, 1000], [0.4, 0.4, 0]
+    [0, PAGE_BREAK / 2, PAGE_BREAK], [0.4, 0.4, 0]
   )
 
   const fadeToBlack = useTransform(scrollY, 
-    [0, 500, 1000], [0, 0, 1]
+    [0, PAGE_BREAK / 2, PAGE_BREAK], [0, 0, 1]
   )
 
   const [computerLoaded, setComputerLoaded] = useState(false)
@@ -68,10 +66,9 @@ export default function Home(props) {
 
   return (
     <GradientCover>
-      <Black style={{opacity: fadeToBlack}} />
       <FilmGrain src={filmGrain} onLoad={() => setFilmGrainLoaded(true)} style={{ opacity: filterOpacities}} />
       <Container>
-        <BigTitle ref={containerRef}>The next giant leap is here...</BigTitle>
+        <BigTitle ref={containerRef}>The only constant is change.</BigTitle>
         <Computer 
           src={computer}
           onLoad={() => setComputerLoaded(true)}
@@ -87,7 +84,9 @@ export default function Home(props) {
           </FillerContent>
         </Filler>
       </Container>
-      <Filters style={{ opacity: filterOpacities}} />
+      <Black style={{opacity: fadeToBlack}}>
+        <Page2 scrollY={scrollY} />
+      </Black>
     </GradientCover>
   )
 }

@@ -5,7 +5,7 @@
   "type": "module",
   "homepage": "https://nstgeorge.github.io/react-template/",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -13,10 +13,12 @@
   "dependencies": {
     "@headlessui/react": "^1.7.16",
     "@headlessui/tailwindcss": "^0.2.0",
+    "@react-three/fiber": "^8.13.6",
     "cross-env": "^7.0.3",
     "framer-motion": "^10.15.1",
     "localforage": "^1.10.0",
     "lucide-react": "^0.265.0",
+    "popmotion": "^11.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.2",
