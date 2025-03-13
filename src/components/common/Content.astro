@@ -1,0 +1,14 @@
+---
+interface Props {
+    fullwidth?: boolean;
+}
+
+const { fullwidth } = Astro.props;
+---
+
+<div
+    id="content"
+    class=`${fullwidth ? "w-full" : "container"} mx-auto px-5 mb-28 min-h-[200vh] lg:max-w-[50em] top-0 mt-28 font-serif`
+>
+    <slot />
+</div>

@@ -1,0 +1,35 @@
+---
+interface Props {
+    title: string;
+    link: string;
+    bgSvg: string;
+}
+
+const { title, link, bgSvg } = Astro.props;
+---
+
+<style>
+    .codicon--link-external {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cg fill='%23000'%3E%3Cpath d='M1.5 1H6v1H2v12h12v-4h1v4.5l-.5.5h-13l-.5-.5v-13z'/%3E%3Cpath d='M15 1.5V8h-1V2.707L7.243 9.465l-.707-.708L13.293 2H8V1h6.5z'/%3E%3C/g%3E%3C/svg%3E");
+        background-color: currentColor;
+        -webkit-mask-image: var(--svg);
+        mask-image: var(--svg);
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-size: 100% 100%;
+        mask-size: 100% 100%;
+    }
+</style>
+
+<a
+    href={link}
+    target="_blank"
+    class="unstyled flex items-end justify-end border border-stone-800 w-full md:w-52 h-24 md:h-40 font-mono pb-2 pr-3 m-5 uppercase font-light transition-[background-color] hover:bg-stone-300 dark:hover:bg-zinc-200 dark:text-stone-800 dark:invert"
+    style=`background-image: ${bgSvg}; background-size: 40px; background-position: -30px -10px; background-attachment: fixed;`
+>
+    {title}
+    <i class="codicon--link-external mb-1 ml-1"></i>
+</a>

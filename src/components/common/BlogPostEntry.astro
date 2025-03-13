@@ -1,0 +1,22 @@
+---
+const { post } = Astro.props;
+const tags = post.data.tags.split(",");
+---
+
+<a
+    href=`blog/${post.id}`
+    class="relative flex flex-col sm:flex-row sm:gap-2 sm:items-center mb-4 sm:mb-2 hover:opacity-60 transition-opacity"
+>
+    <span class="opacity-60 text-xxs font-mono leading-none shrink-0"
+        >{post.data.date}</span
+    >
+    <span class="shrink-0">{post.data.title}</span>
+    <div class="flex gap-2 overflow-hidden">
+        {tags.map((tag) => <span class="tag">{tag.trim()}</span>)}
+        <!-- Shade for excessive tags -->
+        <div
+            class="absolute right-0 bg-gradient-to-l from-stone-200 to-transparent h-full w-8 pointer-events-none"
+        >
+        </div>
+    </div>
+</a>

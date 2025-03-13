@@ -1,0 +1,153 @@
+---
+import Content from "../../components/common/Content.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { id: post.id },
+    props: { post }
+  }))
+}
+
+const { post } = Astro.props;
+const { Content: PostContent } = await render(post);
+---
+
+<script>
+  import { animate, scroll } from "motion";
+
+  document.addEventListener("astro:page-load", (e) => {
+    const tocEntries = document.querySelectorAll<HTMLElement>(".toc-entry");
+    const readIndicator = document.getElementById("read-indicator");
+    const headers = [];
+    for (let entry of tocEntries.values()) {
+      console.log(entry.dataset.connects)
+      headers.push(document.getElementById(entry.dataset.connects));
+    }
+
+    headers.reverse();
+
+    const handleScroll = function (e) {
+      for (let entry of tocEntries.values()) {
+        entry.classList.remove("active");
+      }
+      let foundHeader = false;
+
+      for (let header of headers) {
+        if (window.scrollY > header.offsetTop - 120) {
+          document.getElementById(`toc-${header.id}`).classList.add("active");
+          readIndicator.style.transform = `translateY(${document.getElementById(`toc-${header.id}`).offsetTop}px)`;
+          foundHeader = true;
+          break;
+        }
+      }
+      if (!foundHeader) {
+        readIndicator.style.transform = `translateY(0)`;
+      }
+    }
+    console.log("PAGE LOAD!", e)
+    const toc = document.getElementById("toc");
+    if (toc) {
+      scroll(
+            animate(toc, {
+                y: [50, 0],
+                opacity: [1, 0.3]
+            }),
+            {
+                offset: [0, "600px"],
+            },
+        );
+      window.addEventListener("scroll", handleScroll);
+    } else {
+      window.removeEventListener("scroll", handleScroll);
+    }
+  })
+
+  // document.addEventListener("astro:before-swap", () => {
+  //   window.removeEventListener("scroll", handleScroll);
+  // })
+</script>
+
+<style>
+
+.toc-entry.active {
+    font-weight: bold;
+}
+
+#read-indicator.smear {
+    animation: smear 0.3s forwards;
+}
+</style>
+
+<BaseLayout title={`${post.data.title} - Nate St George`} articleTitle={post.data.title}>
+    <Content fullwidth>
+      <div class="flex flex-row justify-between mt-8">
+        <ul id="toc" class="hidden lg:flex flex-col max-w-96 font-mono text-xxs mr-8 sticky self-start top-[150px] leading-snug hover:!opacity-100 transition-opacity">
+          <div id="read-indicator" class="rounded-full h-1 w-1 absolute bg-stone-500 -left-4 top-2 transition-transform duration-300"></div>
+          <li>
+            <a
+              class="transition-opacity underline hover:!opacity-50"
+              href=`#top`
+            >
+              Top
+            </a>
+          </li>
+          {
+            post.rendered.metadata.headings.map((heading) => {
+              return (
+                <li class="mt-3">
+                  <a
+                    class="toc-entry transition-all leading-tight underline hover:!opacity-50 hover:scale-110"
+                    href=`#${heading.slug}`
+                    id=`toc-${heading.slug}`
+                    data-connects=`${heading.slug}`
+                  >
+                      {heading.text}
+                    </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+        <div id="top" class="container mx-auto px-5">
+          <div class="mb-8">
+            <div class="flex flex-wrap flex-row gap-2 items-center">
+              {
+                post.data.date && (
+                  <div class="text-stone-600 dark:text-stone-400 font-mono text-xxs mr-2">
+                    {post.data.date}
+                  </div>
+                )
+              }
+              {
+                post.data.tags && post.data.tags.split(',').map((tag) => {
+                  tag = tag.trim();
+                  return (
+                    <a href=`/blog?tag=${tag}` class="tag">
+                      {tag}
+                    </a>
+                  )
+                })
+              }
+              </div>
+            <h1 id="content-title" class="text-balance mt-12">{post.data.title}</h1>
+            {
+              post.data.subtitle && (
+                <div
+                  class="italic text-stone-500 dark:text-stone-400 mb-10"
+                  role="doc-subtitle"
+                >
+                  {post.data.subtitle}
+                </div>
+              )
+            }
+          </div>
+          <div class="post-content">
+            <PostContent />
+          </div>
+        </div>
+      </div>
+    </Content>
+</BaseLayout>

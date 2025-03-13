@@ -1,0 +1,90 @@
+<script>
+    document.addEventListener("astro:page-load", () => {
+        let currentTheme = localStorage.getItem("theme");
+        if (
+            (!window.matchMedia("(prefers-color-scheme: dark)").matches &&
+                !localStorage.getItem("theme")) ||
+            localStorage.getItem("theme") !== "dark"
+        ) {
+            document
+                .getElementById("theme-selector")
+                .classList.add("rotate-180");
+        }
+
+        document
+            .getElementById("theme-selector")
+            .addEventListener("click", (e) => {
+                document
+                    .getElementById("theme-selector")
+                    .classList.toggle("rotate-180");
+
+                document.documentElement.classList.toggle("dark");
+
+                localStorage.setItem(
+                    "theme",
+                    localStorage.getItem("theme") === "light"
+                        ? "dark"
+                        : "light",
+                );
+            });
+
+        document
+            .getElementById("theme-selector")
+            .addEventListener("dblclick", (e) => {
+                localStorage.removeItem("theme");
+
+                if (
+                    !window.matchMedia("(prefers-color-scheme: dark)").matches
+                ) {
+                    document
+                        .getElementById("theme-selector")
+                        .classList.add("rotate-180");
+                }
+            });
+    });
+</script>
+<div
+    id="theme-selector"
+    class="grid grid-cols-2 grid-rows-2 fixed -top-8 -right-8 gap-6 z-50 cursor-pointer hover:opacity-70 transition-transform duration-300"
+>
+    <div id="light-mode" class="col-start-2 rotate-180 scale-75 text-stone-500">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+        >
+            <g
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+            >
+                <circle cx="12" cy="12" r="4"></circle>
+                <path
+                    d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+                >
+                </path>
+            </g>
+        </svg>
+    </div>
+    <div id="dark-mode" class="row-start-2 scale-75 text-stone-500">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+        >
+            <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3a6 6 0 0 0 9 9a9 9 0 1 1-9-9"
+            >
+            </path>
+        </svg>
+    </div>
+</div>

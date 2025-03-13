@@ -1,0 +1,27 @@
+---
+const { title, imgSrc } = Astro.props;
+
+const PLACEHOLDER = `https://images.unsplash.com/photo-1728998888241-5b31364203a5?q=80&w=3028&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
+---
+
+<a
+    class="max-w-[28rem] w-full h-72 block relative rounded-lg overflow-clip cursor-pointer shadow hover:shadow-2xl hover:scale-105 transition-all group"
+    href={`/${title.toLowerCase()}`}
+>
+    <img
+        src={imgSrc ?? PLACEHOLDER}
+        class="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:brightness-100 transition-all"
+    />
+    <div
+        class="bg-gradient-to-tl from-black to-transparent absolute inset-0 opacity-80 group-hover:opacity-30 transition-all pointer-events-none"
+    >
+    </div>
+    <h3
+        class={`absolute w-full h-full
+            font-serif text-[4vh] lg:text-[7em] text-center lg:text-left text-white break-words leading-none content-center
+            right-0 bottom-0 px-5
+            drop-shadow-xl z-10 pointer-events-none group-hover:opacity-70 transition-all`}
+    >
+        {title ?? "Thing"}
+    </h3>
+</a>

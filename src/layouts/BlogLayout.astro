@@ -1,0 +1,86 @@
+---
+import Content from "../components/common/Content.astro";
+import BaseLayout from "./BaseLayout.astro";
+
+const { frontmatter, headings } = Astro.props;
+---
+
+<script>
+  import { animate, scroll } from "motion";
+
+  document.addEventListener("astro:page-load", () => {
+    const toc = document.getElementById("toc");
+    if (toc) {
+      scroll(
+            animate(toc, {
+                y: [50, 0],
+                opacity: [1, 0.3]
+            }),
+            {
+                offset: [0, "600px"],
+            },
+        );
+    }
+
+  })
+
+</script>
+
+<BaseLayout title={`${frontmatter.title} - Nate St George`} articleTitle={frontmatter.title}>
+    <Content fullwidth>
+      <div class="flex flex-row justify-between mt-8">
+        <ul id="toc" class="hidden lg:flex flex-col max-w-96 font-mono text-xxs mr-8 sticky self-start top-32 hover:!opacity-100 transition-opacity">
+          {
+            headings.map((heading) => {
+              return (
+                <li class=`mt-2`>
+                  <a
+                    class="transition-opacity underline hover:!opacity-50"
+                    href=`#${heading.slug}`
+                  >
+                      {heading.text}
+                    </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+        <div class="container lg:mr-32 xl:mr-48 2xl:mr-64">
+          <div class="mb-8">
+            <div class="flex flex-wrap flex-row gap-2">
+              {
+                frontmatter.tags && frontmatter.tags.split(',').map((tag) => {
+                  tag = tag.trim();
+                  return (
+                    <a href=`/blog?tag=${tag}` class="tag">
+                      {tag}
+                    </a>
+                  )
+                })
+              }
+              </div>
+            <h1 id="content-title">{frontmatter.title}</h1>
+            {
+              frontmatter.subtitle && (
+                <div
+                  class="italic text-stone-500 dark:text-stone-400"
+                  role="doc-subtitle"
+                >
+                  {frontmatter.subtitle}
+                </div>
+              )
+            }
+            {
+              frontmatter.date && (
+                <div class="text-stone-600 dark:text-stone-400 text-sm">
+                  {frontmatter.date}
+                </div>
+              )
+            }
+          </div>
+
+          <slot />
+        </div>
+      </div>
+    </Content>
+</BaseLayout>

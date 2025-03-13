@@ -1,0 +1,45 @@
+---
+import { ClientRouter, fade } from "astro:transitions";
+import Header from "../components/Header.astro";
+import ThemeSelector from "../components/ThemeSelector.astro";
+import "../styles/global.css";
+
+interface Props {
+    title: string;
+    articleTitle?: string;
+}
+
+const { title, articleTitle } = Astro.props;
+---
+
+<html
+    lang="en"
+    class="bg-stone-200 text-stone-800 dark:bg-stone-800 dark:text-stone-200 transition-colors"
+    transition:animate={fade({ duration: "0.2s" })}
+>
+    <link rel="stylesheet" href="https://use.typekit.net/jxe8svc.css" />
+
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script>
+        document.documentElement.classList.toggle(
+            "dark",
+            localStorage.theme === "dark" ||
+                (!("theme" in localStorage) &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches),
+        );
+    </script>
+
+    <body>
+        <ThemeSelector />
+        <ClientRouter />
+        <main>
+            <Header articleTitle={articleTitle} />
+            <slot />
+        </main>
+    </body>
+</html>
