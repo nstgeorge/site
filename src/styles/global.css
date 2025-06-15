@@ -1,10 +1,43 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css" layer(utilities);
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: 'Amelie Fierce', ui-serif, Georgia, Cambria, serif;
+  --font-serif: 'The Silver Editorial', ui-serif, Georgia, Cambria, serif;
+  --font-sans:
+    Inter, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans-serif: var(font-sans);
+  --font-mono: 'Departure Mono', monospace;
+
+  --text-xxs: 0.7rem;
+  --text-xxxs: 0.5rem;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
 
 @layer base {
   @font-face {
@@ -12,9 +45,60 @@
     font-style: normal;
     font-weight: 400;
     font-display: block;
+    font-variant-ligatures: discretionary-ligatures;
     src:
       url(/fonts/amelie-fierce/AmelieFierce-Regular.woff2) format("woff2"),
       url(/fonts/amelie-fierce/AmelieFierce-Regular.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: "The Silver Editorial";
+    font-style: normal;
+    font-weight: 500;
+    font-display: block;
+    src:
+      url(/fonts/silver-editorial/sltfthesilvereditorial-medium-webfont.woff2) format("woff2"),
+      url(/fonts/silver-editorial/sltfthesilvereditorial-medium-webfont.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: "The Silver Editorial";
+    font-style: italic;
+    font-weight: 500;
+    font-display: block;
+    src:
+      url(/fonts/silver-editorial/sltfthesilvereditorial-mediumitalic-webfont.woff2) format("woff2"),
+      url(/fonts/silver-editorial/sltfthesilvereditorial-mediumitalic-webfont.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: "The Silver Editorial";
+    font-style: normal;
+    font-weight: 600;
+    font-display: block;
+    src:
+      url(/fonts/silver-editorial/sltfthesilvereditorial-semibold-webfont.woff2) format("woff2"),
+      url(/fonts/silver-editorial/sltfthesilvereditorial-semibold-webfont.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: "The Silver Editorial";
+    font-style: normal;
+    font-weight: 700;
+    font-display: block;
+    src:
+      url(/fonts/silver-editorial/sltfthesilvereditorial-bold-webfont.woff2) format("woff2"),
+      url(/fonts/silver-editorial/sltfthesilvereditorial-bold-webfont.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: "Departure Mono";
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src:
+      url(/fonts/departure-mono/DepartureMono-Regular.woff2) format("woff2"),
+      url(/fonts/departure-mono/DepartureMono-Regular.woff) format("woff");
   }
 
   @font-face {
@@ -24,16 +108,56 @@
   }
 }
 
+&:where(.dark, .dark *) {
+  --color-lineColor-x: rgba(0, 0, 0, 0);
+  --color-lineColor-y: #44403b11;
+
+  ::selection {
+    color: var(--color-indigo-200);
+    background-color: var(--color-indigo-900);
+  }
+
+  b,
+  strong,
+  .font-bold {
+    color: white !important;
+  }
+}
+
+&:not(:where(.dark, .dark *)) {
+  --color-lineColor-x: rgba(0, 0, 0, 0);
+  --color-lineColor-y: #44403b11;
+}
+
 html {
   font-variation-settings:
     "opsz" 500,
-    "wght" 300;
+    "wght" 400;
 
-  font-size: 20px;
-  scroll-behavior: smooth;
+  scrollbar-width: thin;
+
+  @apply text-[16px] md:text-[18px] transition-all;
+
+  .font-display {
+    font-weight: 400;
+    letter-spacing: normal;
+  }
 
   :target {
     scroll-margin-top: 100px;
+  }
+
+  .mono-text {
+    font-family: var(--font-mono);
+  }
+
+  &::selection {
+    color: var(--color-indigo-800);
+    background-color: var(--color-indigo-200);
+  }
+
+  .paracontent-item {
+    opacity: 0;
   }
 
   b,
@@ -42,35 +166,72 @@ html {
     font-variation-settings:
       "opsz" 300,
       "wght" 500;
+
+    color: black;
+    transition: color 0.2s;
   }
 
-  p+p {
-    @apply mt-5;
+  figcaption {
+    font-family: var(--font-sans);
+  }
+
+  blockquote {
+    &::before {
+      content: "";
+      @apply block w-0.5 bg-current/50 rounded-sm py-4;
+      grid-row: 1 / span var(--child-count);
+    }
+
+    & p:not(:has(cite)) {}
+
+    & p:has(cite) {
+      &::before {
+        content: "— ";
+      }
+
+      @apply text-base m-0 ps-16 text-stone-500;
+    }
+
+    @apply text-lg relative my-4 text-stone-700 dark:text-stone-300 gap-4;
+
+    display: grid;
+    grid-template-columns: 3px 1fr;
+    grid-auto-rows: min-content;
+
+  }
+
+  p {
+    @apply font-sans leading-relaxed;
+
+    &+p {
+      @apply mt-8;
+    }
   }
 
   h1 {
-    @apply text-3xl lg:text-5xl mt-5;
+    @apply text-3xl lg:text-5xl mt-10 mb-4 font-bold leading-[1.3] tracking-wide;
+    font-variant-ligatures: discretionary-ligatures;
     font-variation-settings:
       "opsz" 100,
       "wght" 400;
   }
 
   h2 {
-    @apply text-2xl lg:text-4xl mt-4;
+    @apply text-2xl lg:text-4xl mt-7 mb-3 font-bold leading-[1.3] tracking-wide;
     font-variation-settings:
       "opsz" 300,
       "wght" 400;
   }
 
   h3 {
-    @apply text-xl lg:text-2xl mt-3 text-stone-500 dark:text-stone-400;
+    @apply text-xl lg:text-2xl mt-6 mb-2 text-stone-500 dark:text-stone-400 font-bold leading-[1.3] tracking-wide;
     font-variation-settings:
       "opsz" 300,
       "wght" 400;
   }
 
   h4 {
-    @apply mt-3 text-stone-500 dark:text-stone-400;
+    @apply mt-5 mb-1 text-stone-500 dark:text-stone-400 font-bold leading-[1.3] tracking-wide;
     font-variation-settings:
       "opsz" 300,
       "wght" 400;
@@ -78,7 +239,7 @@ html {
 
   p {
     a:not(.unstyled) {
-      @apply inline-flex hover:opacity-70 hover:scale-[.98] active:scale-90 transition-all underline-offset-2 text-indigo-600 dark:text-indigo-400;
+      @apply hover:opacity-70 hover:scale-[.98] active:scale-90 transition-all underline-offset-2 text-indigo-600 dark:text-indigo-400;
 
       &[href*="//"]:not([href*="natestgeorge.com"])::after {
         content: "";
@@ -96,7 +257,22 @@ html {
         mask-size: 100% 100%;
       }
     }
+
+    code {
+      @apply text-sm px-1 py-0.5 bg-stone-300 dark:bg-stone-600 rounded;
+    }
   }
+
+  .rehype-figure {
+    img {
+      @apply mt-5 shadow;
+    }
+
+    figcaption {
+      @apply text-xs italic mb-5 mt-1 text-stone-600 dark:text-stone-300 text-center;
+    }
+  }
+
 
   .card-container {
     @apply flex flex-col md:flex-row items-center justify-center xl:gap-12 mb-12 pt-10;
@@ -104,7 +280,7 @@ html {
 
   .post-content {
     pre {
-      @apply px-5 py-3 text-xs rounded my-5 shadow;
+      @apply px-5 py-3 text-xs rounded-sm my-5 shadow-sm;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -123,6 +299,21 @@ html {
 
   .tag {
     @apply bg-stone-300 text-stone-500 dark:bg-stone-700 dark:text-stone-400 font-mono;
-    @apply text-xxxs lg:text-xxs px-1 py-0.5 rounded hover:opacity-60 transition-opacity cursor-pointer;
+    @apply text-[11px] px-1 py-0.5 rounded-sm transition-all;
+  }
+
+  #cursor-gradient {
+    filter: hue-rotate(var(--hue-rotate));
+  }
+
+  .overlay {
+    @apply fixed inset-0 mix-blend-soft-light opacity-30 dark:opacity-20 pointer-events-none z-[999999] scale-105;
+    background-image: url("/img/grain.png");
+    background-repeat: repeat;
+    background-size: 128px;
+  }
+
+  .underlay {
+    @apply fixed inset-0 -z-50;
   }
 }

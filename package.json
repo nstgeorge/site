@@ -10,11 +10,14 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.1.1",
-    "@astrojs/tailwind": "^6.0.0",
-    "@tailwindcss/vite": "^4.0.13",
-    "astro": "^5.4.3",
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/netlify": "^6.3.4",
+    "@tailwindcss/vite": "^4.1.8",
+    "astro": "^5.9.3",
+    "astro-masonry": "^1.2.2",
+    "astro-opengraph-image": "^0.2.2",
     "motion": "^12.0.0",
-    "tailwindcss": "^3.4.17"
+    "rehype-figure": "^1.0.1",
+    "tailwindcss": "^4.1.8"
   }
 }

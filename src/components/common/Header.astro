@@ -1,0 +1,361 @@
+---
+const currentPath = Astro.url.pathname;
+
+interface Props {
+    articleTitle?: string;
+}
+
+const { articleTitle } = Astro.props;
+---
+
+<style>
+    #menu {
+        opacity: 0;
+        display: none;
+        transition:
+            0.2s opacity,
+            0.2s display allow-discrete;
+    }
+
+    #menu.open {
+        opacity: 1;
+        display: block;
+    }
+
+    .menu-link {
+        @apply hover:!opacity-50 active:!opacity-40 transition-opacity;
+        @apply flex flex-row items-center;
+        font-family: var(--font-mono);
+        gap: 0.5rem;
+    }
+
+    #topnav-container {
+        transition:
+            /* 0.5s filter 0.5s,
+            0.5s -webkit-filter 0.5s, */
+            backdrop-filter 0.5s,
+            background-color 0.5s,
+            color: 0.5s !important;
+
+        background-color: rgba(231, 229, 228, 0.5);
+
+        &:where(.dark, .dark *) {
+            background-color: #292524aa;
+        }
+
+        &.in-overlay-mode:not(.open) {
+            @apply bg-transparent!;
+        }
+
+        &.at-top:not(.open) {
+            @apply backdrop-blur-none;
+            background-color: rgba(231, 229, 228, 0);
+            /* mix-blend-mode: difference; */
+            color: #FFF;
+            &:where(.dark, .dark *) {
+                background-color: #29252400;
+            }
+        }
+    }
+
+    @starting-style {
+        #menu.open {
+            opacity: 0;
+            backdrop-filter: blur(0);
+        }
+    }
+
+    @keyframes slide-in {
+        0% {
+            transform: translateX(-10px);
+        }
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slide-out {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-10px);
+        }
+    }
+</style>
+
+<script>
+    import { animate, scroll, stagger } from "motion";
+
+    document.addEventListener("astro:page-load", () => {
+        const menu = document.getElementById("menu");
+        const button = document.getElementById("menu-toggle");
+        const links = document.querySelectorAll(".menu-link");
+        const topnav = document.getElementById("topnav-container");
+        const content = document.getElementById("content");
+
+        let animation;
+
+        const updateColors = (matches) => {
+            // toColor = colors.lineColor[200];
+            // fromColor = colors.stone[300];
+
+            scroll(
+                (animation = animate(topnav, {
+                    y: [0, -36],
+                    borderBottomColor: [
+                        "var(--color-lineColor-x)",
+                        "var(--color-lineColor-y)",
+                    ],
+                })),
+                {
+                    offset: [0, "100px"],
+                },
+            );
+        };
+
+        window.addEventListener("scroll", (e) => {
+            if (window.scrollY < 100 && (location.pathname === "/" || document.getElementById("parallax-container"))) {
+                topnav.classList.add("at-top");
+            } else {
+                topnav.classList.remove("at-top");
+            }
+        });
+
+        if (location.pathname === "/" || document.getElementById("parallax-container")) {
+            topnav.classList.add("at-top");
+        } else {
+            topnav.classList.remove("at-top");
+        }
+
+        // Updaters for color choices
+        updateColors(window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+        window.matchMedia("(prefers-color-scheme: dark)").onchange = (e) => {
+            updateColors(e.matches);
+        };
+
+        window.addEventListener("themeUpdate", updateColors);
+
+        // Delayed transition to prevent annoying flashes with page transitions
+        setTimeout(() => {
+            document
+                .getElementById("topnav-container")
+                .classList.add("transition-[background-color,border-color]");
+        }, 0);
+
+        // Mobile menu
+        button.addEventListener("click", () => {
+            if (!menu.classList.contains("open")) {
+                menu.classList.add("open");
+                topnav.classList.add("open");
+                animate(menu, { height: [0, "100vh"] });
+                document.body.style.overflow = "hidden";
+                content.inert = true;
+                animate(
+                    links,
+                    { opacity: [0, 1], x: [-40, 0] },
+                    { delay: stagger(0.05) },
+                );
+            } else {
+                animate(
+                    Array.from(links).reverse(),
+                    { opacity: [1, 0], x: [0, -40] },
+                    { delay: stagger(0.05) },
+                );
+                setTimeout(() => {
+                    menu.classList.remove("open");
+                    topnav.classList.remove("open");
+                    animate(menu, { height: ["100vh", 0] });
+                    document.body.style.overflow = "";
+                    content.inert = false;
+                }, 50);
+            }
+        });
+    });
+</script>
+<div
+    id="topnav-container"
+    class={`${Astro.url.pathname === "/" || "parallax-container" ? "at-top" : ""} fixed pt-8 w-full z-40 top-0 flex flex-col border-b-[1px] backdrop-blur-lg border-transparent dark:text-stone-100 text-stone-800 select-none`}
+>
+    <nav
+        class="container mx-auto flex items-center justify-start lg:justify-center gap-4 md:gap-12 px-12 md:px-16 max-w-4xl py-3"
+    >
+        <button
+            id="menu-toggle"
+            class="lg:hidden hover:opacity-60 transition-opacity mt-1 p-1 active:opacity-50 cursor-pointer"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                class="-mb-[4px] sm:mb-0"
+            >
+                <path
+                    fill="currentColor"
+                    d="M3 4h18v2H3zm0 7h12v2H3zm0 7h18v2H3z"
+                >
+                </path>
+            </svg>
+        </button>
+        <div class="order-2 mt-[.61rem] sm:mt-[.32rem]">
+            <div
+                id="page-title"
+                class="flex flex-col items-center gap-8"
+                data-articletitle={articleTitle}
+            >
+                <a
+                    href="/"
+                    id="header-title"
+                    class="unstyled block font-display text-2xl sm:text-2xl hover:opacity-70 transition-opacity"
+                    transition:persist
+                    transition:name="header__title"
+                >
+                    NATE ST.&nbsp;GEORGE
+                </a>
+            </div>
+            <div
+                class="opacity-0 bg-stone-400 dark:bg-stone-600 h-[1px] -mt-[1px]"
+                style=`display: ${currentPath === "/" ? "block" : "none"}`
+                transition:name="header__indicator"
+            >
+            </div>
+        </div>
+        <div class="hidden lg:block order-1 grow basis-0">
+            <div class="w-min">
+                <a
+                    href="/music"
+                    class="unstyled font-mono text-[11px] text-center hover:opacity-50 transition-opacity"
+                    transition:persist
+                    transition:name="header__music"
+                >
+                    MUSIC
+                </a>
+                <div
+                    class="bg-stone-400 dark:bg-stone-600 h-[1px] mt-1"
+                    style=`display: ${currentPath.startsWith("/music") ? "block" : "none"}`
+                    transition:name="header__indicator"
+                >
+                </div>
+            </div>
+        </div>
+        <div class="hidden lg:block order-1 grow basis-0">
+            <div class="w-min">
+                <a
+                    href="/code"
+                    class="unstyled font-mono text-[11px] text-center hover:opacity-50 transition-opacity"
+                    transition:persist
+                    transition:name="header__code"
+                >
+                    CODE
+                </a>
+                <div
+                    class="bg-stone-400 dark:bg-stone-600 h-[1px] mt-1"
+                    style=`display: ${currentPath.startsWith("/code") ? "block" : "none"}`
+                    transition:name="header__indicator"
+                >
+                </div>
+            </div>
+        </div>
+        <div class="hidden lg:flex order-3 grow basis-0 justify-end">
+            <div class="w-min">
+                <a
+                    href="/blog"
+                    class="unstyled hidden md:block font-mono text-[11px] text-center hover:opacity-50 transition-opacity"
+                    transition:persist
+                    transition:name="header__blog"
+                >
+                    BLOG
+                </a>
+                <div
+                    class="bg-stone-400 dark:bg-stone-600 h-[1px] mt-1"
+                    style=`display: ${currentPath.startsWith("/blog") ? "block" : "none"}`
+                    transition:name="header__indicator"
+                >
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex order-3 grow basis-0 justify-end">
+            <div class="w-min">
+                <a
+                    href="/photography"
+                    class="unstyled hidden md:block font-mono text-[11px] text-center hover:opacity-50 transition-opacity"
+                    style=`margin-top: ${currentPath.startsWith("/photography") ? "0.75rem" : "0"}`
+                    transition:persist
+                    transition:name="header__photography"
+                >
+                    PHOTOS
+                </a>
+                <div
+                    class="bg-stone-400 dark:bg-stone-600 h-[1px] mt-1"
+                    style=`display: ${currentPath === "/photography" ? "block" : "none"}`
+                    transition:name="header__indicator"
+                >
+                </div>
+            </div>
+        </div>
+    </nav>
+    <nav id="menu" class="z-30 w-full lg:hidden! mb-10">
+        <div
+            class="flex flex-col items-start gap-4 container mx-auto pl-12 md:pl-16 mt-8"
+        >
+            <a href="/music" class="menu-link">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    ><path
+                        fill="currentColor"
+                        d="M13 11V7.5l2.2-2.21c.8-.79.95-2.05.39-3.03A2.47 2.47 0 0 0 13.45 1c-.21 0-.45.03-.64.09C11.73 1.38 11 2.38 11 3.5v3.24L7.86 9.91a5.95 5.95 0 0 0-1.25 6.43c.77 1.9 2.45 3.21 4.39 3.55v.61c0 .26-.23.5-.5.5H9v2h1.5c1.35 0 2.5-1.11 2.5-2.5V20c2.03 0 4.16-1.92 4.16-4.75c0-2.3-1.92-4.25-4.16-4.25m0-7.5c0-.23.11-.41.32-.47c.22-.06.45.03.56.23a.5.5 0 0 1-.08.61l-.8.86zm-2 8c-.97.64-1.7 1.74-1.96 2.76l1.96.52v3.05a3.86 3.86 0 0 1-2.57-2.26c-.59-1.46-.27-3.12.83-4.24L11 9.5zm2 6.5v-5.06c1.17 0 2.18 1.1 2.18 2.31C15.18 17 13.91 18 13 18"
+                    ></path></svg
+                >
+                MUSIC
+            </a>
+            <a
+                href="/code"
+                class="menu-link font-mono hover:opacity-50! transition-opacity"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    ><path
+                        fill="currentColor"
+                        d="m12.89 3l1.96.4L11.11 21l-1.96-.4zm6.7 9L16 8.41V5.58L22.42 12L16 18.41v-2.83zM1.58 12L8 5.58v2.83L4.41 12L8 15.58v2.83z"
+                    ></path></svg
+                >
+                CODE
+            </a>
+            <a href="/blog" class="menu-link">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    ><path
+                        fill="currentColor"
+                        d="m19 2l-5 4.5v11l5-4.5zM6.5 5C4.55 5 2.45 5.4 1 6.5v14.66c0 .25.25.5.5.5c.1 0 .15-.07.25-.07c1.35-.65 3.3-1.09 4.75-1.09c1.95 0 4.05.4 5.5 1.5c1.35-.85 3.8-1.5 5.5-1.5c1.65 0 3.35.31 4.75 1.06c.1.05.15.03.25.03c.25 0 .5-.25.5-.5V6.5c-.6-.45-1.25-.75-2-1V19c-1.1-.35-2.3-.5-3.5-.5c-1.7 0-4.15.65-5.5 1.5V6.5C10.55 5.4 8.45 5 6.5 5"
+                    ></path>
+                </svg>
+                BLOG
+            </a>
+            <a href="/photography" class="menu-link">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    ><path
+                        fill="currentColor"
+                        d="M22 16V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-11-4l2.03 2.71L16 11l4 5H8M2 6v14a2 2 0 0 0 2 2h14v-2H4V6"
+                    ></path>
+                </svg>
+                PHOTOS
+            </a>
+        </div>
+    </nav>
+</div>

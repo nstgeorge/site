@@ -4,13 +4,14 @@ import BaseLayout from "./BaseLayout.astro";
 
 interface Props {
     title: string;
+    fullwidth?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, fullwidth } = Astro.props;
 ---
 
 <BaseLayout title={title}>
-    <Content>
+    <Content fullwidth={fullwidth}>
         <slot />
     </Content>
 </BaseLayout>

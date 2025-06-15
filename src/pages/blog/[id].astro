@@ -1,7 +1,9 @@
 ---
+import { Picture } from "astro:assets";
 import Content from "../../components/common/Content.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, render } from 'astro:content';
+import ParallaxImage from "../../components/common/ParallaxImage.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -13,17 +15,26 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content: PostContent } = await render(post);
+
+let headerPhoto;
+if (post.data.headerPhoto) {
+  const pathArr = post.filePath.split("/")
+  // Remove src/content/blog and filename
+  const path = pathArr.slice(1, -1).join("/")
+  console.log(`${path}/${post.data.headerPhoto}`)
+  headerPhoto = import(`../../${path}/${post.data.headerPhoto}`);
+}
+
 ---
 
 <script>
-  import { animate, scroll } from "motion";
+  import { animate, hover, scroll } from "motion";
 
   document.addEventListener("astro:page-load", (e) => {
     const tocEntries = document.querySelectorAll<HTMLElement>(".toc-entry");
     const readIndicator = document.getElementById("read-indicator");
     const headers = [];
     for (let entry of tocEntries.values()) {
-      console.log(entry.dataset.connects)
       headers.push(document.getElementById(entry.dataset.connects));
     }
 
@@ -37,8 +48,8 @@ const { Content: PostContent } = await render(post);
 
       for (let header of headers) {
         if (window.scrollY > header.offsetTop - 120) {
-          document.getElementById(`toc-${header.id}`).classList.add("active");
-          readIndicator.style.transform = `translateY(${document.getElementById(`toc-${header.id}`).offsetTop}px)`;
+          document.getElementById(`toc-${header.id}`)?.classList.add("active");
+          readIndicator.style.transform = `translateY(${document.getElementById(`toc-${header.id}`)?.offsetTop}px)`;
           foundHeader = true;
           break;
         }
@@ -47,22 +58,45 @@ const { Content: PostContent } = await render(post);
         readIndicator.style.transform = `translateY(0)`;
       }
     }
-    console.log("PAGE LOAD!", e)
     const toc = document.getElementById("toc");
     if (toc) {
       scroll(
-            animate(toc, {
-                y: [50, 0],
-                opacity: [1, 0.3]
-            }),
-            {
-                offset: [0, "600px"],
-            },
-        );
+          animate(toc, {
+              y: [0, 0],
+              opacity: [1, 0.3]
+          }),
+          {
+              offset: ["400px", "800px"],
+          },
+      );
+      hover(toc, (element) => {
+        const anim = animate(toc, {
+          opacity: 1
+        }, {
+          duration: 0.6,
+          repeat: 1,
+          repeatType: "reverse"
+        })
+
+        setTimeout(() => {
+          anim.pause()
+        }, 300)
+
+        return () => {
+          anim.play()
+          setTimeout(() => {
+          anim.pause()
+        }, 300)
+        }
+      })
       window.addEventListener("scroll", handleScroll);
     } else {
       window.removeEventListener("scroll", handleScroll);
     }
+
+    document.querySelectorAll("blockquote").forEach(elem => {
+      elem.style.setProperty("--child-count", "" + elem.childElementCount);
+    })
   })
 
   // document.addEventListener("astro:before-swap", () => {
@@ -71,6 +105,9 @@ const { Content: PostContent } = await render(post);
 </script>
 
 <style>
+#toc {
+  animation-fill-mode: forwards;
+}
 
 .toc-entry.active {
     font-weight: bold;
@@ -81,14 +118,29 @@ const { Content: PostContent } = await render(post);
 }
 </style>
 
-<BaseLayout title={`${post.data.title} - Nate St George`} articleTitle={post.data.title}>
-    <Content fullwidth>
-      <div class="flex flex-row justify-between mt-8">
-        <ul id="toc" class="hidden lg:flex flex-col max-w-96 font-mono text-xxs mr-8 sticky self-start top-[150px] leading-snug hover:!opacity-100 transition-opacity">
+<BaseLayout title={`${post.data.title} // Nate St George`} articleTitle={post.data.title}>
+    <Content>
+      {headerPhoto &&
+        <div id="parallax-container" class="h-[28rem] top-0 w-[100vw] left-0 absolute overflow-clip">
+          <ParallaxImage image={headerPhoto} title={post.data.title} alt="header photo" verticalOffset={-500} imgClass="brightness-75" ccontainerClass="lg:pl-48">
+              {post.data.subtitle && (
+                <hr class="paracontent-item opacity-60 mt-2 mb-3 w-12 border-dotted"/>
+                <div
+                  class="paracontent-item font-sans text-sm italic text-white opacity-80 mb-10"
+                  role="doc-subtitle"
+                >
+                  {post.data.subtitle}
+                </div>
+            )}
+          </ParallaxImage>
+        </div>
+      }
+      <div class=`flex flex-row justify-between mt-8 ${headerPhoto ? "mt-[30rem]" : "mt-8"}`>
+        <ul id="toc" class="hidden lg:flex flex-col max-w-96 font-mono text-xxs mr-8 sticky self-start top-[150px] leading-snug">
           <div id="read-indicator" class="rounded-full h-1 w-1 absolute bg-stone-500 -left-4 top-2 transition-transform duration-300"></div>
           <li>
             <a
-              class="transition-opacity underline hover:!opacity-50"
+              class="transition-opacity underline hover:opacity-50!"
               href=`#top`
             >
               Top
@@ -99,7 +151,7 @@ const { Content: PostContent } = await render(post);
               return (
                 <li class="mt-3">
                   <a
-                    class="toc-entry transition-all leading-tight underline hover:!opacity-50 hover:scale-110"
+                    class="toc-entry transition-opacity leading-tight underline hover:opacity-50! hover:scale-110"
                     href=`#${heading.slug}`
                     id=`toc-${heading.slug}`
                     data-connects=`${heading.slug}`
@@ -131,18 +183,18 @@ const { Content: PostContent } = await render(post);
                   )
                 })
               }
+            </div>
+            {!headerPhoto && (
+              <h1 id="content-title" class="text-balance mt-12">{post.data.title}</h1>
+            )}
+            {!headerPhoto && post.data.subtitle && (
+              <div
+                class="italic text-stone-500 dark:text-stone-400 mb-10"
+                role="doc-subtitle"
+              >
+                {post.data.subtitle}
               </div>
-            <h1 id="content-title" class="text-balance mt-12">{post.data.title}</h1>
-            {
-              post.data.subtitle && (
-                <div
-                  class="italic text-stone-500 dark:text-stone-400 mb-10"
-                  role="doc-subtitle"
-                >
-                  {post.data.subtitle}
-                </div>
-              )
-            }
+            )}
           </div>
           <div class="post-content">
             <PostContent />

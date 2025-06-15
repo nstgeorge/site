@@ -1,53 +1,193 @@
 <script>
+    import { animate } from "motion";
+
     document.addEventListener("astro:page-load", () => {
-        let currentTheme = localStorage.getItem("theme");
+        let angle = 0;
+        let pressTimeout;
+        let ignoreNextClickEvent = false;
+
+        // Basic setup
+
+        if (localStorage.getItem("theme")) {
+            const options = document.querySelectorAll(".selector-option");
+            options.forEach((opt) => {
+                opt.classList.add("bg-stone-500/20");
+            });
+        }
+
         if (
             (!window.matchMedia("(prefers-color-scheme: dark)").matches &&
                 !localStorage.getItem("theme")) ||
-            localStorage.getItem("theme") !== "dark"
+            localStorage.getItem("theme") === "light"
         ) {
-            document
-                .getElementById("theme-selector")
-                .classList.add("rotate-180");
+            angle += 180;
+            animate(
+                document.getElementById("theme-selector"),
+                {
+                    rotate: angle,
+                },
+                {
+                    duration: 0,
+                },
+            );
+
+            document.documentElement.classList.remove("dark");
+        } else {
+            document.documentElement.classList.add("dark");
         }
+
+        // Event handlers
 
         document
             .getElementById("theme-selector")
             .addEventListener("click", (e) => {
-                document
-                    .getElementById("theme-selector")
-                    .classList.toggle("rotate-180");
+                if (!ignoreNextClickEvent) {
+                    angle += 180;
 
-                document.documentElement.classList.toggle("dark");
+                    const options =
+                        document.querySelectorAll(".selector-option");
+                    options.forEach((opt) => {
+                        opt.classList.add("bg-stone-500/20");
+                    });
 
-                localStorage.setItem(
-                    "theme",
-                    localStorage.getItem("theme") === "light"
-                        ? "dark"
-                        : "light",
-                );
+                    animate(
+                        document.getElementById("theme-selector"),
+                        {
+                            rotate: angle,
+                        },
+                        {
+                            duration: 0.6,
+                            type: "spring",
+                        },
+                    );
+
+                    document.documentElement.classList.toggle("dark");
+
+                    if (localStorage.getItem("theme")) {
+                        localStorage.setItem(
+                            "theme",
+                            localStorage.getItem("theme") === "light"
+                                ? "dark"
+                                : "light",
+                        );
+                    } else {
+                        localStorage.setItem(
+                            "theme",
+                            angle % 360 === 0 ? "dark" : "light",
+                        );
+                    }
+
+                    window.dispatchEvent(new CustomEvent("themeUpdate"));
+                } else {
+                    ignoreNextClickEvent = false;
+                }
             });
+
+        const handleBeginPress = (e) => {
+            pressTimeout = setTimeout(() => {
+                if (localStorage.getItem("theme")) {
+                    localStorage.removeItem("theme");
+                    ignoreNextClickEvent = true;
+                    if (
+                        (window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches &&
+                            angle % 360 !== 0) ||
+                        (!window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches &&
+                            angle % 360 === 0)
+                    ) {
+                        angle += 180;
+                        animate(
+                            document.getElementById("theme-selector"),
+                            {
+                                rotate: angle,
+                            },
+                            {
+                                duration: 0.6,
+                                type: "spring",
+                            },
+                        );
+                        document.documentElement.classList.toggle("dark");
+                        window.dispatchEvent(new CustomEvent("themeUpdate"));
+                    }
+
+                    const options =
+                        document.querySelectorAll(".selector-option");
+                    options.forEach((opt) => {
+                        opt.classList.remove("bg-stone-500/20");
+                    });
+
+                    navigator.vibrate && navigator.vibrate(50);
+
+                    document
+                        .getElementById("selector-ping")
+                        .classList.remove("hidden");
+                    setTimeout(() => {
+                        document
+                            .getElementById("selector-ping")
+                            .classList.add("hidden");
+                    }, 800);
+                }
+            }, 1000);
+        };
+
+        const handleEndPress = (e) => {
+            clearTimeout(pressTimeout);
+        };
 
         document
             .getElementById("theme-selector")
-            .addEventListener("dblclick", (e) => {
-                localStorage.removeItem("theme");
+            .addEventListener("mousedown", handleBeginPress);
 
+        document
+            .getElementById("theme-selector")
+            .addEventListener("touchstart", handleBeginPress);
+
+        window.addEventListener("mouseup", handleEndPress);
+        window.addEventListener("touchend", handleEndPress);
+        window
+            .matchMedia("(prefers-color-scheme: dark)")
+            .addEventListener("change", (e) => {
                 if (
-                    !window.matchMedia("(prefers-color-scheme: dark)").matches
+                    ((window.matchMedia("(prefers-color-scheme: dark)")
+                        .matches &&
+                        angle % 360 !== 0) ||
+                        (!window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches &&
+                            angle % 360 === 0)) &&
+                    !localStorage.getItem("theme")
                 ) {
-                    document
-                        .getElementById("theme-selector")
-                        .classList.add("rotate-180");
+                    angle += 180;
+                    animate(
+                        document.getElementById("theme-selector"),
+                        {
+                            rotate: angle,
+                        },
+                        {
+                            duration: 0.6,
+                            type: "spring",
+                        },
+                    );
+                    document.documentElement.classList.toggle("dark");
+                    window.dispatchEvent(new CustomEvent("themeUpdate"));
                 }
             });
     });
 </script>
 <div
-    id="theme-selector"
-    class="grid grid-cols-2 grid-rows-2 fixed -top-8 -right-8 gap-6 z-50 cursor-pointer hover:opacity-70 transition-transform duration-300"
+    id="selector-ping"
+    class="rounded-full dark:bg-stone-600 bg-stone-400 fixed top-2 right-[0.4rem] w-12 h-12 z-50 animate-ping hidden transition-opacity duration-300 pointer-events-none"
 >
-    <div id="light-mode" class="col-start-2 rotate-180 scale-75 text-stone-500">
+</div>
+<div
+    id="theme-selector"
+    class="grid grid-cols-2 grid-rows-2 fixed -top-14 -right-14 sm:-top-12 sm:-right-12 gap-6 z-50 cursor-pointer hover:opacity-70 select-none transition-opacity"
+>
+    <button
+        id="light-mode"
+        title="Switch to dark mode. Long press to return to system default."
+        class="selector-option col-start-2 rotate-180 scale-80 text-stone-500 cursor-pointer rounded-full p-2"
+    >
         <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -68,8 +208,12 @@
                 </path>
             </g>
         </svg>
-    </div>
-    <div id="dark-mode" class="row-start-2 scale-75 text-stone-500">
+    </button>
+    <button
+        id="dark-mode"
+        title="Switch to light mode. Long press to return to system default."
+        class="selector-option row-start-2 scale-80 text-stone-500 cursor-pointer rounded-full p-2"
+    >
         <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -86,5 +230,5 @@
             >
             </path>
         </svg>
-    </div>
+    </button>
 </div>

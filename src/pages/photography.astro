@@ -1,14 +1,105 @@
 ---
+import type { ImageMetadata } from "astro";
+import { Masonry } from "astro-masonry";
+import { Image, Picture } from "astro:assets";
+import ParallaxImage from "../components/common/ParallaxImage.astro";
 import Layout from "../layouts/Layout.astro";
-import { Image } from "astro:assets";
+
+let photos = import.meta.glob<{ default: ImageMetadata }>(
+    "/src/assets/images/photography/*.{jpeg,jpg,png,gif}",
+);
+
+const headerPhoto = import("../assets/images/headers/photography.jpg");
 ---
 
-<Layout title="Nate St George - Photography">
-    <h1>Photography</h1>
-    <Image
-        src="//images.pixieset.com/45252288/4b49672a37638bc68937d3accf453758-xxlarge.jpg"
-        alt="Test photo"
-        width="800"
-        height="1200"
-    />
+<script>
+    import { animate, inView } from "motion";
+
+    document.addEventListener("astro:page-load", () => {
+        const imgs = document.getElementsByClassName("photography-image");
+        const hint = document.getElementById("hide-hint");
+        Array.from(imgs).forEach((img) => {
+            img.addEventListener("click", (e) => {
+                img.classList.toggle("fixed");
+                img.classList.toggle("inset-0");
+                img.classList.toggle("z-50");
+                img.classList.toggle("w-[100vw]!");
+                img.classList.toggle("h-[100vh]!");
+                img.classList.toggle("object-contain!");
+                img.classList.toggle("backdrop-blur-xl");
+                img.classList.toggle("backdrop-brightness-50");
+                img.classList.toggle("shadow");
+                img.classList.toggle("hover:brightness-75");
+                img.classList.toggle("md:p-5");
+                hint.classList.toggle("hidden");
+                hint.classList.toggle("opacity-50");
+            });
+        });
+
+        inView(".photography-image", (element) => {
+            animate(
+                element,
+                {
+                    opacity: 1,
+                    y: [10, 0],
+                },
+                {
+                    delay: 0.3,
+                    duration: 0.4,
+                },
+            );
+        });
+    });
+</script>
+<Layout title="Nate St George // Photography" fullwidth>
+    <div
+        id="parallax-container"
+        class="h-[28rem] top-0 w-[100vw] left-0 absolute overflow-clip"
+    >
+        <ParallaxImage
+            image={headerPhoto}
+            alt="Header image of a Boise State bass drum in front of the blue field"
+            verticalOffset={-500}
+            imgClass="brightness-50"
+        >
+            <div
+                class="paracontent-item absolute inset-0 flex flex-col px-10 mt-10 w-full h-full justify-center mx-auto font-display text-5xl sm:text-7xl md:text-8xl lg:text-8xl xl:text-9xl text-center text-white"
+            >
+                PHOTOGRAPHY
+            </div>
+        </ParallaxImage>
+    </div>
+    <div class="container lg:max-w-[50em] mx-auto mt-[30em] mb-10">
+        <p>
+            I am primarily a marching arts photographer, since I take photos for
+            Boise State's Blue Thunder Marching Band. I also occasionally shoot
+            for the Boise Gems, a local drum corps started by members of BTMB.
+        </p>
+        <p>Below, you'll find some of my favorite photos.</p>
+    </div>
+    <div
+        id="hide-hint"
+        class="text-center opacity-0 hidden transition-discrete fixed bottom-10 left-0 right-0 z-[60] text-white text-shadow-md font-sans text-xs"
+    >
+        Click anywhere to dismiss.
+    </div>
+
+    <Masonry
+        breakpointCols={{
+            default: 3,
+            700: 2,
+            500: 1,
+        }}
+    >
+        {
+            Object.values(photos).map((photo) => (
+                <Picture
+                    class="photography-image p-2 cursor-pointer hover:brightness-75 transition-[filter] opacity-0"
+                    src={photo()}
+                    formats={["jpeg", "webp"]}
+                    alt="placeholder alt text"
+                />
+            ))
+        }
+    </Masonry>
 </Layout>

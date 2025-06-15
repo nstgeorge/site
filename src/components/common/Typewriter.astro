@@ -1,0 +1,93 @@
+---
+interface Props {
+  string: string;
+  delay?: number;
+  childTag?: string;
+  childProps?: object;
+  [x: string]: unknown;
+}
+
+const {
+  string,
+  delay = 0,
+  childTag = "span",
+  childProps = {},
+  ...properties
+} = Astro.props;
+---
+
+<ns-typewriter
+  data-string={string}
+  data-delay={delay}
+  data-tag-name={childTag}
+  data-child-props={JSON.stringify(childProps)}
+  {...properties}
+>
+  <span class="blinker -ml-2 opacity-0">_</span>
+</ns-typewriter>
+
+<script>
+  import { animate, inView, motionValue } from "motion";
+
+  class Typewriter extends HTMLElement {
+    connectedCallback() {
+      const tagName = this.dataset.tagName;
+      const child = document.createElement(tagName);
+      const childProperties = JSON.parse(this.dataset.childProps);
+
+      Object.entries(childProperties).forEach(([key, val]) => {
+        child[key] = val;
+      });
+
+      this.prepend(child);
+
+      const blinker = this.getElementsByClassName("blinker")[0];
+      // const blinkerAnim = animate(
+      //   blinker,
+      //   {
+      //     opacity: [0, 0, 1, 1],
+      //   },
+      //   {
+      //     duration: 0.5,
+      //     repeat: Infinity,
+      //     repeatDelay: 0,
+      //     ease: "linear",
+      //     times: [0, 0.5, 0.5, 1],
+      //   },
+      // );
+
+      const baseString = this.dataset.string.trim();
+      const delay = Number(this.dataset.delay);
+      const index = motionValue(0);
+
+      inView(
+        this,
+        () => {
+          setTimeout(() => {
+            blinker.classList.toggle("opacity-0");
+          }, delay * 1000);
+          animate(index, baseString.length, {
+            duration: baseString.length / 20,
+            delay: delay,
+          });
+        },
+        {
+          // margin: "-50px",
+        },
+      );
+
+      let displayString = "";
+
+      index.on("change", (value) => {
+        displayString = baseString.slice(0, Math.round(value));
+        child.textContent = displayString;
+        if (Math.round(value) === baseString.length) {
+          // blinkerAnim.stop();
+          blinker.classList.add("opacity-0!");
+        }
+      });
+    }
+  }
+
+  customElements.define("ns-typewriter", Typewriter);
+</script>

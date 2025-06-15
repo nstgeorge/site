@@ -1,27 +1,49 @@
 ---
 import { ClientRouter, fade } from "astro:transitions";
-import Header from "../components/Header.astro";
+import Header from "../components/common/Header.astro";
 import ThemeSelector from "../components/ThemeSelector.astro";
 import "../styles/global.css";
+import Footer from "../components/common/Footer.astro";
 
 interface Props {
     title: string;
     articleTitle?: string;
+    metaDescription?: string;
+    metaTitle?: string;
+    metaType?: string;
 }
 
-const { title, articleTitle } = Astro.props;
+const { title, articleTitle, metaDescription, metaTitle, metaType } =
+    Astro.props;
 ---
 
 <html
     lang="en"
-    class="bg-stone-200 text-stone-800 dark:bg-stone-800 dark:text-stone-200 transition-colors"
+    class="bg-stone-200 text-stone-600 dark:bg-stone-800 dark:text-stone-300 transition-colors"
     transition:animate={fade({ duration: "0.2s" })}
 >
     <link rel="stylesheet" href="https://use.typekit.net/jxe8svc.css" />
 
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
-    <meta name="viewport" content="width=device-width" />
+    <meta
+        name="description"
+        content={metaDescription
+            ? metaDescription
+            : "Nate St George's website."}
+    />
+    <meta
+        name="og:title"
+        content={metaTitle ?? articleTitle ?? title ?? "Nate St George"}
+    />
+    <meta
+        name="og:description"
+        content={metaDescription ?? "Nate St George's website."}
+    />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="og:type" content={metaType ?? "website"} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
@@ -32,14 +54,77 @@ const { title, articleTitle } = Astro.props;
                 (!("theme" in localStorage) &&
                     window.matchMedia("(prefers-color-scheme: dark)").matches),
         );
+
+        // document.addEventListener("astro:page-load", () => {
+        //     const cursorGrad = document.getElementById("cursor-gradient");
+
+        //     const mouseX = motionValue(0);
+        //     const mouseY = motionValue(0);
+        //     const mouseSpeed = motionValue(0);
+
+        //     const { top, left, width, height } =
+        //         cursorGrad.getBoundingClientRect();
+
+        //     const initialX = left + width / 2;
+        //     const initialY = top + height / 2;
+
+        //     function gradientToPointer() {
+        //         animate(
+        //             cursorGrad,
+        //             {
+        //                 x: mouseX.get() - initialX,
+        //                 y: mouseY.get() - initialY,
+        //                 "--hue-rotate":
+        //                     (mouseX.get() + mouseY.get()) / 10 + "deg",
+        //             },
+        //             { type: "spring", stiffness: 100, damping: 30 },
+        //         );
+        //         animate(cursorGrad, {
+        //             scale: 1 - mouseSpeed.get() / 10,
+        //         });
+        //     }
+
+        //     mouseX.on("change", () => frame.postRender(gradientToPointer));
+        //     mouseY.on("change", () => frame.postRender(gradientToPointer));
+
+        //     window.addEventListener("mousemove", (e) => {
+        //         mouseX.set(e.pageX);
+        //         mouseY.set(e.pageY);
+        //         mouseSpeed.set(
+        //             Math.sqrt(
+        //                 (Math.abs(e.movementX) ^ 2) +
+        //                     (Math.abs(e.movementY) ^ 2),
+        //             ),
+        //         );
+        //         cursorGrad.classList.remove("opacity-0");
+        //     });
+        // });
     </script>
 
-    <body>
+    <body class="">
         <ThemeSelector />
         <ClientRouter />
+        <div
+            transition:name="overlay"
+            transition:persist
+            class="overlay transition-opacity h-full w-full"
+        >
+        </div>
+        <div class="underlay bg-stone-200 dark:bg-stone-800"></div>
         <main>
-            <Header articleTitle={articleTitle} />
-            <slot />
+            <!-- <div
+                id="cursor-gradient"
+                class="absolute w-32 h-32 -z-50 bg-radial to-transparent from-indigo-500 to-50% rounded-full opacity-0 transition-opacity duration-100"
+            > -->
         </main>
+        <div
+            class="fixed w-full h-16 -z-50 top-0 bg-linear-to-t from-stone-200/50 to-stone-400/50 dark:from-stone-800/50 dark:to-stone-950/50"
+        >
+        </div>
+        <Header articleTitle={articleTitle} />
+        <div class="min-h-[90vh]">
+            <slot />
+        </div>
+        <Footer />
     </body>
 </html>

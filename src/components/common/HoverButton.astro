@@ -1,0 +1,179 @@
+---
+const {
+  bgColor = "#000",
+  accentColor = "#FFF",
+  bgStartColor,
+  bgEndColor,
+  className,
+  href,
+  onClick,
+} = Astro.props;
+
+const Container = href ? "a" : "button";
+---
+
+<style define:vars={{ bgColor, accentColor, bgStartColor, bgEndColor }}>
+  .fancy-button {
+    --tw-gradient-from: var(--bgStartColor);
+    --tw-gradient-to: var(--bgEndColor);
+    --tw-gradient-stops: var(
+      --tw-gradient-via-stops,
+      var(--tw-gradient-position),
+      var(--tw-gradient-from) var(--tw-gradient-from-position),
+      var(--tw-gradient-to) var(--tw-gradient-to-position)
+    );
+
+    &:not(.bg-gradient-to-t) {
+      background: var(--bgColor);
+    }
+  }
+
+  .hover-gradient {
+    --tw-gradient-from: var(--accentColor);
+  }
+</style>
+<script>
+  import { animate, frame, motionValue } from "motion";
+
+  function getScrollParent(element, includeHidden) {
+    var style = getComputedStyle(element);
+    var excludeStaticParent = style.position === "absolute";
+    var overflowRegex = includeHidden
+      ? /(auto|scroll|hidden)/
+      : /(auto|scroll)/;
+
+    if (style.position === "fixed") return document.body;
+    for (var parent = element; (parent = parent.parentElement); ) {
+      style = getComputedStyle(parent);
+      if (excludeStaticParent && style.position === "static") {
+        continue;
+      }
+      if (
+        overflowRegex.test(style.overflow + style.overflowY + style.overflowX)
+      ) {
+        return parent;
+      }
+    }
+
+    return document.body;
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    const cursorGrads = document.querySelectorAll(".hover-gradient");
+    const overlay =
+      document.getElementById("overlay") ?? document.documentElement;
+    setTimeout(() => {
+      cursorGrads.forEach((cursorGrad) => {
+        const mouseX = motionValue(0);
+        const mouseY = motionValue(0);
+
+        let { top, left, width, height } = cursorGrad.getBoundingClientRect();
+        let { top: containerTop, left: containerLeft } =
+          cursorGrad.parentElement.getBoundingClientRect();
+
+        let lastScrollTop = 0;
+
+        function gradientToPointer() {
+          animate(
+            cursorGrad,
+            {
+              x: mouseX.get(),
+              y: mouseY.get(),
+            },
+            { duration: 0 },
+          );
+        }
+
+        mouseX.on("change", () => frame.postRender(gradientToPointer));
+        mouseY.on("change", () => frame.postRender(gradientToPointer));
+
+        // Allow starting animation to play
+        setTimeout(() => {
+          window.addEventListener("mousemove", (e) => {
+            mouseX.set(e.clientX - (left + width / 2));
+            mouseY.set(e.clientY - (top + height / 2) + overlay.scrollTop);
+          });
+        }, 1000);
+
+        const handleMovement = () => {
+          // Subtract the movement of the container from the initial location of the gradient
+          let { top: newContainerTop, left: newContainerLeft } =
+            cursorGrad.parentElement.getBoundingClientRect();
+          top =
+            top -
+            (containerTop -
+              newContainerTop -
+              (overlay.scrollTop - lastScrollTop));
+          left = left - (containerLeft - newContainerLeft);
+          containerLeft = newContainerLeft;
+          containerTop = newContainerTop;
+          lastScrollTop = overlay.scrollTop;
+        };
+
+        window.addEventListener("nate:recheckCursorLocation", handleMovement);
+        window.addEventListener("resize", handleMovement);
+      });
+
+      // Animate on load
+      const buttons = document.querySelectorAll(".fancy-button");
+      let animDelay = 0.5;
+
+      buttons.forEach((button) => {
+        const flare = button.querySelector(".hover-gradient");
+        const maxX = button.getBoundingClientRect().width;
+        const startX = -flare.getBoundingClientRect().width;
+        const y = -flare.getBoundingClientRect().height / 2;
+        animate([
+          [
+            button,
+            {
+              scale: 1.05,
+            },
+            { duration: 0.1, delay: animDelay },
+          ],
+          [
+            flare,
+            {
+              x: startX,
+              y: y,
+            },
+            { duration: 0 },
+          ],
+          [
+            flare,
+            {
+              x: maxX,
+              y: y,
+            },
+            { duration: 0.3 },
+          ],
+          [button, { scale: 1 }, { duration: 0.2, delay: 0.1 }],
+        ]);
+        animDelay += 0.2;
+      });
+    }, 100);
+  });
+</script>
+<div>
+  <Container
+    {...href ? { href } : {}}
+    class:list={[
+      `
+      fancy-button relative cursor-pointer overflow-hidden 
+      hover:scale-105 active:scale-95 active:brightness-75 transition-all select-none
+      focus:outline-indigo-400
+      rounded shadow px-2 py-1 font-mono text-xxs md:text-xs flex flex-row gap-2 items-center
+      ${className}
+      `,
+      {
+        "bg-gradient-to-t": bgStartColor && bgEndColor,
+      },
+    ]}
+  >
+    <div
+      class=`hover-gradient flex absolute top-0 left-0 h-36 w-36 rounded-full bg-radial via-transparent to-transparent opacity-30 pointer-events-none z-0`
+    >
+    </div>
+    <slot />
+  </Container>
+</div>

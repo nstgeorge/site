@@ -1,14 +1,14 @@
 ---
-import BlogPostEntry from "../components/common/BlogPostEntry.astro";
-import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import BlogPostEntry from "../components/entries/BlogPostEntry.astro";
+import Layout from "../layouts/Layout.astro";
 
 let posts = await getCollection("blog");
-posts = posts.reverse();
+posts.sort((a, b) => parseInt(b.data.order) - parseInt(a.data.order));
 ---
 
-<Layout title="Nate St George - Blog">
-    <h1 class="mb-5">Blog</h1>
+<Layout title="Nate St George // Blog">
+    <h1 class="mb-10!">Blog</h1>
     <ul id="posts">
         {
             posts.map((post) => {

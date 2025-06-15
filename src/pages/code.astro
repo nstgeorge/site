@@ -1,10 +1,18 @@
 ---
+import { getCollection } from "astro:content";
+import ProjectOverlay from "../components/common/ProjectOverlay.astro";
+import CodeEntry from "../components/entries/CodeEntry.astro";
 import Layout from "../layouts/Layout.astro";
+
+const { hasOverlay, project, overrideTitle } = Astro.props;
+
+let projects = await getCollection("code");
+projects.sort((a, b) => parseInt(b.data.order) - parseInt(a.data.order));
 ---
 
-<Layout title="Nate St George - Code">
+<Layout title={overrideTitle ? overrideTitle : "Nate St George // Code"}>
   <h1 class="mb-5">Code</h1>
-  <div>
+  <div inert={hasOverlay}>
     <p>
       Because of my love for design, I am primarily a frontend developer,
       although I often dip into the backend for certain projects. I am most
@@ -22,4 +30,20 @@ import Layout from "../layouts/Layout.astro";
       write-ups!
     </p>
   </div>
+
+  <ul id="projects" class="mt-10" inert={hasOverlay}>
+    {
+      projects.map((project) => {
+        return <CodeEntry entry={project} />;
+      })
+    }
+  </ul>
+
+  {
+    hasOverlay && (
+      <ProjectOverlay backlink="/code" title={project.data.title}>
+        <slot />
+      </ProjectOverlay>
+    )
+  }
 </Layout>

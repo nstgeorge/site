@@ -5,4 +5,12 @@ const blog = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/blog" })
 })
 
-export const collections = { blog }
+const music = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/music" })
+})
+
+const code = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/code" })
+})
+
+export const collections = { blog, music, code }
