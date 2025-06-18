@@ -16,8 +16,6 @@ const { project } = Astro.props;
 const { Content: ProjectContent } = await render(project);
 const tags = project.data.tags.split(",");
 const techs = project.data.technologies.split(",");
-
-const image = import(`../../assets/images/code/${project.data.image}`);
 ---
 
 <Code
@@ -41,7 +39,7 @@ const image = import(`../../assets/images/code/${project.data.image}`);
   </div>
   <div id="art-container" class="perspective-midrange">
     <Image
-      src={image}
+      src={project.data.image}
       alt={`${project.data.title} art`}
       width="450"
       height="300"

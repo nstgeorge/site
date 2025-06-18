@@ -4,7 +4,7 @@ import BlogPostEntry from "../components/entries/BlogPostEntry.astro";
 import Layout from "../layouts/Layout.astro";
 
 let posts = await getCollection("blog");
-posts.sort((a, b) => parseInt(b.data.order) - parseInt(a.data.order));
+posts.sort((a, b) => b.data.order - a.data.order);
 
 if (import.meta.env.MODE === "production") {
     posts = posts.filter((p) => !p.data.draft);

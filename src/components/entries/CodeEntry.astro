@@ -3,8 +3,6 @@ import { Image } from "astro:assets";
 const { entry, isOnSinglePage } = Astro.props;
 const tags = entry.data.tags?.split(",");
 const techs = entry.data.technologies?.split(",");
-
-const image = import(`../../assets/images/code/${entry.data.image}`);
 ---
 
 <li
@@ -15,7 +13,7 @@ const image = import(`../../assets/images/code/${entry.data.image}`);
     href=`/code/${entry.id}`
   >
     <Image
-      src={image}
+      src={entry.data.image}
       alt={`${entry.data.title} art`}
       width="900"
       height="600"

@@ -3,7 +3,7 @@ title: Hello world. Here is a long title, very long and excessive.
 subtitle: From humble beginnings...
 date: 1/24/2025
 order: 1
-headerPhoto: header.jpg
+headerPhoto: ./header.jpg
 draft: true
 
 tags: code, testing, hello, so, many, tags, what, is, going, on, way, too, many, tags!

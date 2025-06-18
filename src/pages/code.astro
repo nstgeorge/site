@@ -7,7 +7,7 @@ import Layout from "../layouts/Layout.astro";
 const { hasOverlay, project, overrideTitle } = Astro.props;
 
 let projects = await getCollection("code");
-projects.sort((a, b) => parseInt(b.data.order) - parseInt(a.data.order));
+projects.sort((a, b) => b.data.order - a.data.order);
 ---
 
 <Layout title={overrideTitle ? overrideTitle : "Nate St George // Code"}>

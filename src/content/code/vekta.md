@@ -2,7 +2,7 @@
 title: VEKTA
 releaseDate: 2018-2021
 tags: game, physics
-image: vekta.png
+image: ./images/vekta.png
 github: https://github.com/nstgeorge/VEKTA
 technologies: Java, Processing
 order: 1

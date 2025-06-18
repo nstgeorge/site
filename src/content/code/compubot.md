@@ -2,7 +2,7 @@
 title: compubot
 releaseDate: 2021-present
 tags: AI, discord bot, silly
-image: compubot.png
+image: ./images/compubot.png
 github: https://github.com/nstgeorge/compubot
 technologies: Python, ChatGPT
 order: 2

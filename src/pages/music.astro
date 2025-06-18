@@ -6,7 +6,7 @@ import MusicEntry from "../components/entries/MusicEntry.astro";
 import Layout from "../layouts/Layout.astro";
 
 let releases = await getCollection("music");
-releases.sort((a, b) => parseInt(b.data.order) - parseInt(a.data.order));
+releases.sort((a, b) => b.data.order - a.data.order);
 
 const drumYears = new Date().getFullYear() - 2010;
 const { hasOverlay, release, overrideTitle } = Astro.props;

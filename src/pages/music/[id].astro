@@ -15,8 +15,6 @@ export async function getStaticPaths() {
 const { release } = Astro.props;
 const { Content: ReleaseContent } = await render(release);
 const tags = release.data.genres.split(",");
-
-const image = import(`../../assets/images/music/${release.data.image}`);
 ---
 
 <Music
@@ -35,7 +33,7 @@ const image = import(`../../assets/images/music/${release.data.image}`);
   </div>
   <div id="art-container" class="perspective-midrange">
     <Image
-      src={image}
+      src={release.data.image}
       alt={`${release.data.title} album art`}
       width="300"
       height="300"

@@ -2,7 +2,7 @@
 title: Requiem
 releaseDate: 1/26/2020
 genres: orchestral
-image: requiem.jpg
+image: ./images/requiem.jpg
 bandcamp: https://natestgeorge.bandcamp.com/album/requiem
 spotify: https://open.spotify.com/album/6NW8w7dZhZIhgekVhcbp8h
 order: 3

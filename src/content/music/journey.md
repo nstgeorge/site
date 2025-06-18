@@ -2,7 +2,7 @@
 title: Journey
 releaseDate: 5/7/2016
 genres: soundtrack, orchestral, electronic
-image: journey.jpg
+image: ./images/journey.jpg
 bandcamp: https://natestgeorge.bandcamp.com/album/journey
 spotify: https://open.spotify.com/album/0SjosQePYTmPxhL2OhtgaQ?si=0p3HvDIERgaUFxQTme1kfw
 order: 1
