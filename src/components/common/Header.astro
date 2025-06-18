@@ -122,11 +122,11 @@ const { articleTitle } = Astro.props;
             }
         });
 
-        if (location.pathname === "/" || document.getElementById("parallax-container")) {
-            topnav.classList.add("at-top");
-        } else {
-            topnav.classList.remove("at-top");
-        }
+        if (window.scrollY < 100 && (location.pathname === "/" || document.getElementById("parallax-container"))) {
+                topnav.classList.add("at-top");
+            } else {
+                topnav.classList.remove("at-top");
+            }
 
         // Updaters for color choices
         updateColors(window.matchMedia("(prefers-color-scheme: dark)").matches);

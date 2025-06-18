@@ -4,9 +4,9 @@ const drumYears = new Date().getFullYear() - 2010;
 
 import { Image, Picture } from "astro:assets";
 import image from "../assets/images/headers/main.jpg";
+import head from "../assets/images/headers/head.jpg";
 import HoverButton from "./common/HoverButton.astro";
 import ParallaxImage from "./common/ParallaxImage.astro";
-// import Image from "astro/components/Image.astro";
 ---
 
 <script>
@@ -48,8 +48,14 @@ import ParallaxImage from "./common/ParallaxImage.astro";
         alt="Nate looking at the camera, sitting on a couch"
         verticalOffset={-500}
         imgClass="brightness-75"
-        containerClass="justify-end pb-8"
+        containerClass="xl:justify-end pb-8 lg:pb-16 px-30 md:px-24 max-w-[500px]! mt-18"
     >
+        <Picture
+            class="md:hidden rounded-full shadow border-2 border-stone-400"
+            src={head}
+            alt="Nate's face"
+            pictureAttributes={{ class: "mx-auto" }}
+        />
         <div id="cards" class="card-container gap-2 md:gap-5">
             <HoverButton
                 href="https://natestgeorge.bandcamp.com/"
@@ -90,8 +96,8 @@ import ParallaxImage from "./common/ParallaxImage.astro";
             </HoverButton>
             <HoverButton
                 href="https://www.btmb.media/"
-                bgEndColor="#6bd680"
-                bgStartColor="#35bf95"
+                bgEndColor="#833ab4"
+                bgStartColor="#405de6"
                 className="text-white"
             >
                 <svg
@@ -136,8 +142,8 @@ import ParallaxImage from "./common/ParallaxImage.astro";
     <p>
         My name is <strong>Nate St George</strong>. I work for Xylem under the
         Sensus brand, building AutomationControl&mdash;a tool for automating
-        electrical distribution, providing safer and more reliable service to
-        millions of people&mdash;with a focus on
+        electrical distribution networks, providing safer and more reliable
+        service to millions of people&mdash;with a focus on
         <strong>frontend development and UX.</strong>
     </p>
     <p class="mt-5">
@@ -168,4 +174,16 @@ import ParallaxImage from "./common/ParallaxImage.astro";
         other creative works. If you use my music in your project, please let me
         know!
     </p>
+    <div
+        class="rounded-md shadow-lg bg-white dark:bg-stone-900 px-5 pt-2 pb-5 mt-5"
+    >
+        <small class="text-xxs font-mono text-stone-400">// ATTENTION</small>
+        <p>
+            There is a good amount of work on this site that is old, some of it
+            as far as high school. Instead of deleting it, I've decided to
+            embrace this as a record of my improvement doing the things I love.
+            If you're looking for work that represents my current skill level,
+            pay attention to dates.
+        </p>
+    </div>
 </div>

@@ -4,9 +4,10 @@ import { Masonry } from "astro-masonry";
 import { Image, Picture } from "astro:assets";
 import ParallaxImage from "../components/common/ParallaxImage.astro";
 import Layout from "../layouts/Layout.astro";
+import HoverButton from "../components/common/HoverButton.astro";
 
 let photos = import.meta.glob<{ default: ImageMetadata }>(
-    "/src/assets/images/photography/*.{jpeg,jpg,png,gif}",
+    "/src/assets/images/photography/*.{jpeg,jpg,png,gif,JPG}",
 );
 
 const headerPhoto = import("../assets/images/headers/photography.jpg");
@@ -63,7 +64,7 @@ const headerPhoto = import("../assets/images/headers/photography.jpg");
             imgClass="brightness-50"
         >
             <div
-                class="paracontent-item absolute inset-0 flex flex-col px-10 mt-10 w-full h-full justify-center mx-auto font-display text-5xl sm:text-7xl md:text-8xl lg:text-8xl xl:text-9xl text-center text-white"
+                class="paracontent-item absolute inset-0 flex flex-col px-10 justify-center mx-auto font-display text-5xl sm:text-7xl md:text-8xl lg:text-8xl xl:text-9xl text-center text-white"
             >
                 PHOTOGRAPHY
             </div>
@@ -71,11 +72,70 @@ const headerPhoto = import("../assets/images/headers/photography.jpg");
     </div>
     <div class="container lg:max-w-[50em] mx-auto mt-[30em] mb-10">
         <p>
-            I am primarily a marching arts photographer, since I take photos for
-            Boise State's Blue Thunder Marching Band. I also occasionally shoot
-            for the Boise Gems, a local drum corps started by members of BTMB.
+            I started my photography journey with Boise State's Blue Thunder
+            Marching Band after the director asked if I had any experience with
+            photography. I said no, but I could give it a shot anyway. I bought
+            a camera and learned how to use it over the course of the first band
+            camp. Every season I feel that my photos are substantially better
+            than the last.
         </p>
-        <p>Below, you'll find some of my favorite photos.</p>
+        <p>
+            I occasionally shoot for the Boise Gems, a local drum corps started
+            by members of BTMB. Every season I am impressed by their jump in
+            quality, and I highly recommend seeing them if you can.
+        </p>
+        <p>
+            Below, you'll find some of my favorite photos. If you like them,
+            feel free to check out my dedicated photography site.
+        </p>
+    </div>
+    <div
+        class="flex flex-col lg:flex-row justify-center items-center mb-8 gap-5"
+    >
+        <HoverButton
+            href="https://www.btmb.media/"
+            bgEndColor="#833ab4"
+            bgStartColor="#405de6"
+            className="text-white"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                ><g
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    ><path
+                        d="M15 8h.01M3 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"
+                    ></path><path d="m3 16l5-5c.928-.893 2.072-.893 3 0l5 5"
+                    ></path><path d="m14 14l1-1c.928-.893 2.072-.893 3 0l3 3"
+                    ></path></g
+                >
+            </svg>
+            Photos
+        </HoverButton>
+        <HoverButton
+            href="https://instagram.com/natestgeorge"
+            bgEndColor="#c13584"
+            bgStartColor="#f77737"
+            className="text-white"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                ><path
+                    fill="currentColor"
+                    d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4zm9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3"
+                ></path></svg
+            >
+            Instagram
+        </HoverButton>
     </div>
     <div
         id="hide-hint"
@@ -102,4 +162,52 @@ const headerPhoto = import("../assets/images/headers/photography.jpg");
             ))
         }
     </Masonry>
+    <div
+        class="flex flex-col lg:flex-row justify-center items-center mt-16 gap-5"
+    >
+        <HoverButton
+            href="https://www.btmb.media/"
+            bgEndColor="#833ab4"
+            bgStartColor="#405de6"
+            className="text-white"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                ><g
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    ><path
+                        d="M15 8h.01M3 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"
+                    ></path><path d="m3 16l5-5c.928-.893 2.072-.893 3 0l5 5"
+                    ></path><path d="m14 14l1-1c.928-.893 2.072-.893 3 0l3 3"
+                    ></path></g
+                >
+            </svg>
+            Photos
+        </HoverButton>
+        <HoverButton
+            href="https://instagram.com/natestgeorge"
+            bgEndColor="#c13584"
+            bgStartColor="#f77737"
+            className="text-white"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                ><path
+                    fill="currentColor"
+                    d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4zm9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3"
+                ></path></svg
+            >
+            Instagram
+        </HoverButton>
+    </div>
 </Layout>

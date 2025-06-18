@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
+import HoverButton from "../components/common/HoverButton.astro";
 import ProjectOverlay from "../components/common/ProjectOverlay.astro";
-import SimpleCard from "../components/common/SimpleCard.astro";
 import MusicEntry from "../components/entries/MusicEntry.astro";
 import Layout from "../layouts/Layout.astro";
 
@@ -15,19 +15,6 @@ const { hasOverlay, release, overrideTitle } = Astro.props;
 <Layout title={overrideTitle ? overrideTitle : `Nate St George // Music`}>
   <div inert={hasOverlay}>
     <h1>Music</h1>
-    <div class="card-container">
-      <SimpleCard
-        title="Spotify"
-        link="https://open.spotify.com/artist/0OuyQFGIe0a24m3NG0cplx?si=awKWkGOrTJKwphypz-q3mw"
-        bgSvg=`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-opacity='0.05' d='M17.9 10.9C14.7 9 9.35 8.8 6.3 9.75c-.5.15-1-.15-1.15-.6c-.15-.5.15-1 .6-1.15c3.55-1.05 9.4-.85 13.1 1.35c.45.25.6.85.35 1.3c-.25.35-.85.5-1.3.25m-.1 2.8c-.25.35-.7.5-1.05.25c-2.7-1.65-6.8-2.15-9.95-1.15c-.4.1-.85-.1-.95-.5s.1-.85.5-.95c3.65-1.1 8.15-.55 11.25 1.35c.3.15.45.65.2 1m-1.2 2.75c-.2.3-.55.4-.85.2c-2.35-1.45-5.3-1.75-8.8-.95c-.35.1-.65-.15-.75-.45c-.1-.35.15-.65.45-.75c3.8-.85 7.1-.5 9.7 1.1c.35.15.4.55.25.85M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2'/%3E%3C/svg%3E")`
-      />
-      <SimpleCard
-        title="Bandcamp"
-        link="https://natestgeorge.bandcamp.com/"
-        bgSvg=`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-opacity='0.05' d='m0 18.75l7.437-13.5H24l-7.438 13.5z'/%3E%3C/svg%3E")`
-      />
-    </div>
-
     <div>
       <p>
         My music draws from a wide range of influences: from soundtracks to
@@ -37,6 +24,51 @@ const { hasOverlay, release, overrideTitle } = Astro.props;
         of day. I have a lot of music I'm sitting on that will hopefully be released
         soon, but in the meantime here are my existing releases!
       </p>
+    </div>
+
+    <div
+      class="flex flex-col lg:flex-row justify-center items-center mt-5 gap-5"
+    >
+      <HoverButton
+        href="https://natestgeorge.bandcamp.com/"
+        target="_blank"
+        bgEndColor="#1DA0C3"
+        bgStartColor="#6046FE"
+        accentColor="#FFF"
+        className="text-white rounded shadow px-2 py-1 font-mono text-xxs md:text-xs flex flex-row gap-2 items-center"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path fill="currentColor" d="m0 18.75l7.437-13.5H24l-7.438 13.5z"
+          ></path>
+        </svg>
+        Follow me on Bandcamp
+      </HoverButton>
+      <HoverButton
+        href="https://open.spotify.com/artist/0OuyQFGIe0a24m3NG0cplx?si=awKWkGOrTJKwphypz-q3mw"
+        target="_blank"
+        bgEndColor="#292524"
+        bgStartColor="#000"
+        accentColor="#CCC"
+        className="text-[#1db954] rounded px-2 py-1 font-mono text-xs transition-all flex flex-row items-center gap-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="currentColor"
+            d="M12.001 2c-5.5 0-10 4.5-10 10s4.5 10 10 10s10-4.5 10-10s-4.45-10-10-10m3.75 14.65c-2.35-1.45-5.3-1.75-8.8-.95c-.35.1-.65-.15-.75-.45c-.1-.35.15-.65.45-.75c3.8-.85 7.1-.5 9.7 1.1c.35.15.4.55.25.85c-.2.3-.55.4-.85.2m1-2.7c-2.7-1.65-6.8-2.15-9.95-1.15c-.4.1-.85-.1-.95-.5s.1-.85.5-.95c3.65-1.1 8.15-.55 11.25 1.35c.3.15.45.65.2 1s-.7.5-1.05.25M6.3 9.75c-.5.15-1-.15-1.15-.6c-.15-.5.15-1 .6-1.15c3.55-1.05 9.4-.85 13.1 1.35c.45.25.6.85.35 1.3c-.25.35-.85.5-1.3.25C14.7 9 9.35 8.8 6.3 9.75"
+          ></path>
+        </svg>
+        Follow me on Spotify
+      </HoverButton>
     </div>
 
     <div class="mt-10">

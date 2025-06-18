@@ -5,15 +5,25 @@ import Layout from "../layouts/Layout.astro";
 
 let posts = await getCollection("blog");
 posts.sort((a, b) => parseInt(b.data.order) - parseInt(a.data.order));
+
+if (import.meta.env.MODE === "production") {
+    posts = posts.filter((p) => !p.data.draft);
+}
 ---
 
 <Layout title="Nate St George // Blog">
     <h1 class="mb-10!">Blog</h1>
     <ul id="posts">
         {
-            posts.map((post) => {
-                return <BlogPostEntry post={post} />;
-            })
+            posts.length > 0 ? (
+                posts.map((post) => {
+                    return <BlogPostEntry post={post} />;
+                })
+            ) : (
+                <li class="font-sans text-center text-sm">
+                    There are no posts yet. Come back soon!
+                </li>
+            )
         }
     </ul>
 </Layout>

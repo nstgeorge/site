@@ -35,6 +35,7 @@ const {
         scroll(
           animate(content, {
             y: [0, 100],
+            opacity: [1, 0],
           }),
           {
             offset: [0, "100vh"],
@@ -61,7 +62,7 @@ const {
 <style>
   .paraimage {
     position: relative;
-    top: calc(-15vw + 100px);
+    top: calc(-20vw + 100px);
   }
 </style>
 <div class="w-full h-full bg-stone-800">
@@ -75,20 +76,17 @@ const {
   <div
     class=`paracontent z-10 absolute inset-0 flex flex-col px-10 mt-10 w-full h-full justify-center max-w-[50em] mx-auto ${containerClass ?? ""}`
   >
-    <div
-      class="text-balance tracking-wide leading-[1.3] text-white text-3xl mb-3 md:text-5xl"
-    >
-      {
-        title &&
-          title
-            .split(" ")
-            .map((word) => (
-              <span class="inline-block mr-2 md:mr-3 paracontent-item">
-                {word + " "}
-              </span>
-            ))
-      }
-    </div>
+    {
+      title && (
+        <div class="text-balance tracking-wide leading-[1.3] text-white text-3xl mb-3 md:text-5xl">
+          {title.split(" ").map((word) => (
+            <span class="inline-block mr-2 md:mr-3 paracontent-item">
+              {word + " "}
+            </span>
+          ))}
+        </div>
+      )
+    }
     <slot />
   </div>
 </div>
