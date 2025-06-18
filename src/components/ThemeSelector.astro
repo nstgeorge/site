@@ -1,8 +1,9 @@
 <script>
     import { animate } from "motion";
 
+    let angle = 0;
+
     document.addEventListener("astro:page-load", () => {
-        let angle = 0;
         let pressTimeout;
         let ignoreNextClickEvent = false;
 
@@ -30,10 +31,6 @@
                     duration: 0,
                 },
             );
-
-            document.documentElement.classList.remove("dark");
-        } else {
-            document.documentElement.classList.add("dark");
         }
 
         // Event handlers

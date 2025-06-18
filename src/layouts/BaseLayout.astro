@@ -47,60 +47,22 @@ const { title, articleTitle, metaDescription, metaTitle, metaType } =
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
-    <script>
-        document.documentElement.classList.toggle(
-            "dark",
-            localStorage.theme === "dark" ||
-                (!("theme" in localStorage) &&
-                    window.matchMedia("(prefers-color-scheme: dark)").matches),
-        );
+    <script is:inline>
+        function setupColors() {
+            if (
+                (!window.matchMedia("(prefers-color-scheme: dark)").matches &&
+                    !localStorage.getItem("theme")) ||
+                localStorage.getItem("theme") === "light"
+            ) {
+                document.documentElement.classList.remove("dark");
+            } else {
+                document.documentElement.classList.add("dark");
+            }
+        }
 
-        // document.addEventListener("astro:page-load", () => {
-        //     const cursorGrad = document.getElementById("cursor-gradient");
-
-        //     const mouseX = motionValue(0);
-        //     const mouseY = motionValue(0);
-        //     const mouseSpeed = motionValue(0);
-
-        //     const { top, left, width, height } =
-        //         cursorGrad.getBoundingClientRect();
-
-        //     const initialX = left + width / 2;
-        //     const initialY = top + height / 2;
-
-        //     function gradientToPointer() {
-        //         animate(
-        //             cursorGrad,
-        //             {
-        //                 x: mouseX.get() - initialX,
-        //                 y: mouseY.get() - initialY,
-        //                 "--hue-rotate":
-        //                     (mouseX.get() + mouseY.get()) / 10 + "deg",
-        //             },
-        //             { type: "spring", stiffness: 100, damping: 30 },
-        //         );
-        //         animate(cursorGrad, {
-        //             scale: 1 - mouseSpeed.get() / 10,
-        //         });
-        //     }
-
-        //     mouseX.on("change", () => frame.postRender(gradientToPointer));
-        //     mouseY.on("change", () => frame.postRender(gradientToPointer));
-
-        //     window.addEventListener("mousemove", (e) => {
-        //         mouseX.set(e.pageX);
-        //         mouseY.set(e.pageY);
-        //         mouseSpeed.set(
-        //             Math.sqrt(
-        //                 (Math.abs(e.movementX) ^ 2) +
-        //                     (Math.abs(e.movementY) ^ 2),
-        //             ),
-        //         );
-        //         cursorGrad.classList.remove("opacity-0");
-        //     });
-        // });
+        document.addEventListener("astro:after-swap", setupColors);
+        setupColors();
     </script>
-
     <body class="">
         <ThemeSelector />
         <ClientRouter />
