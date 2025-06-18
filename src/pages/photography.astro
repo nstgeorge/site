@@ -7,7 +7,7 @@ import Layout from "../layouts/Layout.astro";
 import HoverButton from "../components/common/HoverButton.astro";
 
 let photos = import.meta.glob<{ default: ImageMetadata }>(
-    "/src/assets/images/photography/*.{jpg,jpg,png,gif,JPG}",
+    "/src/assets/images/photography/*.{jpg,png,JPG}",
 );
 
 const headerPhoto = import("../assets/images/headers/photography.jpg");
