@@ -116,11 +116,14 @@ const { Content: PostContent } = await render(post);
               {post.data.subtitle && (
                 <hr class="paracontent-item opacity-60 mt-2 mb-3 w-12 border-dotted"/>
                 <div
-                  class="paracontent-item font-sans text-sm italic text-white opacity-80 mb-10"
+                  class="paracontent-item font-sans text-sm italic text-white opacity-80"
                   role="doc-subtitle"
                 >
                   {post.data.subtitle}
                 </div>
+            )}
+            {post.data.photoCredit && (
+              <div class="paracontent-item float-end text-stone-300 text-shadow text-xxxs font-mono">Photo by {post.data.photoCredit}</div>
             )}
           </ParallaxImage>
         </div>

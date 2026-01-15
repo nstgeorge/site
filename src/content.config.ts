@@ -19,6 +19,7 @@ const blog = defineCollection({
     date: z.string(),
     order: z.number(),
     headerPhoto: z.optional(image()),
+    photoCredit: z.optional(z.string()),
     draft: z.optional(z.boolean()),
     tags: z.string()
   })

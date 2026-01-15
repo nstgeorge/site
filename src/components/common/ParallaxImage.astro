@@ -24,7 +24,7 @@ const {
         // avoid poor mobile performance and hard to control image sizing
         scroll(
           animate(image, {
-            y: [0, -100],
+            y: [0, 100],
           }),
           {
             offset: [0, "100vh"],
@@ -34,7 +34,7 @@ const {
       for (let content of contents) {
         scroll(
           animate(content, {
-            y: [0, 100],
+            y: [0, 150],
             opacity: [1, 0],
           }),
           {

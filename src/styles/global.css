@@ -192,7 +192,7 @@ html {
       @apply text-base m-0 ps-16 text-stone-500;
     }
 
-    @apply text-lg relative my-4 text-stone-700 dark:text-stone-300 gap-4;
+    @apply text-sm relative my-4 text-stone-700 dark:text-stone-300 gap-4;
 
     display: grid;
     grid-template-columns: 3px 1fr;
