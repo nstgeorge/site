@@ -5,7 +5,7 @@ date: 1/14/2026
 order: 1
 headerPhoto: ./header.jpg
 photoCredit: Klara Kulikova on Unsplash
-draft: true
+draft: false
 tags: ramblings
 ---
 
